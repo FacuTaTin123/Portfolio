@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block contenido %}
+{% set editando = current_user.is_authenticated %}
+
+<header class="banner" style="background-image: url('{{ perfil.banner if perfil and perfil.banner else url_for('static', filename='img/banner.jpg') }}')"></header>
+
+<section class="container acerca fade-in">
+    <div class="row align-items-start">
+        <div class="col-12 col-md-4 text-center">
+            <img class="foto" src="{{ perfil.foto if perfil and perfil.foto else url_for('static', filename='img/foto.jpg') }}" alt="Foto de Facundo Balancini">
+            <h2 class="mt-2">{{ perfil.nombre if perfil }}</h2>
+            <p class="text-muted">{{ perfil.titulo if perfil }}</p>
+        </div>
+        <div class="col-12 col-md-8">
+            <h3>Acerca de mí {% if editando %}<a class="btn-icono" href="{{ url_for('editar_perfil') }}"><i class="fa fa-pen"></i></a>{% endif %}</h3>
+            <p style="white-space: pre-line">{{ perfil.descripcion if perfil }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="container seccion">
+    <h3>Experiencia {% if editando %}<a class="btn-icono" href="{{ url_for('editar', tipo='experiencia') }}"><i class="fa fa-plus"></i></a>{% endif %}</h3>
+    {% for e in experiencias %}
+    <div class="item fade-in">
+        <div class="item-titulo">
+            <strong>{{ e.titulo }}</strong>
+            {% if editando %}
+            <span class="acciones">
+                <a class="btn-icono" href="{{ url_for('editar', tipo='experiencia', id=e.id) }}"><i class="fa fa-pen"></i></a>
+                <form method="post" action="{{ url_for('eliminar', tipo='experiencia', id=e.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn-icono"><i class="fa fa-xmark"></i></button>
+                </form>
+            </span>
+            {% endif %}
+        </div>
+        <small class="text-muted">{{ e.empresa }} · {{ e.periodo }}</small>
+        <p>{{ e.descripcion }}</p>
+    </div>
+    {% else %}
+    <p class="text-muted">Todavía sin experiencia laboral.</p>
+    {% endfor %}
+</section>
+
+<section class="container seccion">
+    <h3>Educación {% if editando %}<a class="btn-icono" href="{{ url_for('editar', tipo='educacion') }}"><i class="fa fa-plus"></i></a>{% endif %}</h3>
+    {% for e in educaciones %}
+    <div class="item fade-in">
+        <div class="item-titulo">
+            <strong>{{ e.titulo }}</strong>
+            {% if editando %}
+            <span class="acciones">
+                <a class="btn-icono" href="{{ url_for('editar', tipo='educacion', id=e.id) }}"><i class="fa fa-pen"></i></a>
+                <form method="post" action="{{ url_for('eliminar', tipo='educacion', id=e.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn-icono"><i class="fa fa-xmark"></i></button>
+                </form>
+            </span>
+            {% endif %}
+        </div>
+        <small class="text-muted">{{ e.institucion }} · {{ e.periodo }}</small>
+        <p>{{ e.descripcion }}</p>
+    </div>
+    {% endfor %}
+</section>
+
+<section class="container seccion">
+    <h3>Hard & Soft Skills {% if editando %}<a class="btn-icono" href="{{ url_for('editar', tipo='habilidad') }}"><i class="fa fa-plus"></i></a>{% endif %}</h3>
+    <div class="row">
+        {% for h in habilidades %}
+        <div class="col-6 col-md-4 col-lg-2 text-center mb-4">
+            <div class="circulo" style="--p: {{ h.nivel }}"><span>{{ h.nivel }}%</span></div>
+            <div class="mt-2">{{ h.titulo }}</div>
+            <small class="text-muted">{{ h.tipo }}</small>
+            {% if editando %}
+            <div class="acciones justify-content-center">
+                <a class="btn-icono" href="{{ url_for('editar', tipo='habilidad', id=h.id) }}"><i class="fa fa-pen"></i></a>
+                <form method="post" action="{{ url_for('eliminar', tipo='habilidad', id=h.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn-icono"><i class="fa fa-xmark"></i></button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="container seccion">
+    <h3>Proyectos {% if editando %}<a class="btn-icono" href="{{ url_for('editar', tipo='proyecto') }}"><i class="fa fa-plus"></i></a>{% endif %}</h3>
+    {% for p in proyectos %}
+    <div class="item fade-in">
+        <div class="item-titulo">
+            <strong>{{ p.titulo }}</strong>
+            {% if editando %}
+            <span class="acciones">
+                <a class="btn-icono" href="{{ url_for('editar', tipo='proyecto', id=p.id) }}"><i class="fa fa-pen"></i></a>
+                <form method="post" action="{{ url_for('eliminar', tipo='proyecto', id=p.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn-icono"><i class="fa fa-xmark"></i></button>
+                </form>
+            </span>
+            {% endif %}
+        </div>
+        <small class="text-muted">{{ p.fecha }}</small>
+        <p>{{ p.descripcion }}</p>
+        {% if p.link %}<a class="btn btn-success btn-sm" href="{{ p.link }}" target="_blank">Ver proyecto</a>{% endif %}
+    </div>
+    {% endfor %}
+</section>
+
+<section class="container seccion">
+    <h3>Ubicación</h3>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3402.0508057988677!2d-64.17600782511356!3d-31.49528730006847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9432a49fd8a22e3f%3A0x89314b0122dc4bf4!2sAgust%C3%ADn%20Piaggio%201551%2C%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1795042599015!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</section>
+
+<footer class="text-center text-muted py-4">{{ perfil.nombre if perfil }}</footer>
+{% endblock %}
